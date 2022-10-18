@@ -1,23 +1,26 @@
-dev.off();
-rm(list=ls());
-options(scipen=100, digits=3);
+dev.off(); # ?
+rm(list=ls()); #remove this command
+options(scipen=100, digits=3); #digit formatting
 
+## install libraries
 library("pacman");
-p_load(ggplot2,tidyverse, Hmisc, gtable, gridExtra, plyr, dplyr, lme4, eply, stringr, do,
-       glmm, car, scales, tidyr, grid, ggrepel, lmerTest, tidyselect, tidyverse, Kmisc,
+p_load(ggplot2,tidyverse, Hmisc, gtable, gridExtra, plyr, dplyr, lme4, eply, stringr, do,glmm, car, scales, tidyr, grid, ggrepel, lmerTest, tidyselect, tidyverse, Kmisc,
        nlme, ggpubr, goft, openxlsx, broom.mixed, patchwork, psych,
-       hrbrthemes, latticeExtra, plotrix, pbapply, data.table, word2vec);
+       hrbrthemes, latticeExtra, plotrix, pbapply, data.table, word2vec, here);
 
-library(here)
+## if you're using custom packages, include path
 
-setwd("/Users/elenaluchkina/Documents/GitHub/code_review/9 months csv")
-path <-("//Users/elenaluchkina/Documents/GitHub/code_review/9 months csv") 
+## set paths
+# setwd("/Users/elenaluchkina/Documents/GitHub/code_review/9 months csv")
+path <-here::here('data/9 months csv')  # consider getting rid of sapces in filenames
 merge_file_name <- here::here('data/9 months csv/All_9mo')
   
+## load data
 filenames <- list.files(path= path, full.names=TRUE)
 all_data <- map_df(filenames, ~read.csv(.x) %>% mutate(File = basename(.x)))
-df <- strings2factors(all_data)
+df <- strings2factors(all_data) # convert all strings to factors, rename as df
 
+## preprocessing the data structure
 df[df==""] <- NA
 df <- df %>% mutate(ID_subj=ID.code01)
 data <- df
@@ -26,8 +29,10 @@ variables <- names(data)
 delete <-data.frame(remove,variables)
 data <- data[,delete$variables[which(delete$remove==FALSE)]]
 
-data$I_beh_obj <- paste_na(data$I_beh_obj.Manipulate,data$I_beh_obj.Inspect,data$I_beh_obj.Ignore,data$I_beh_obj.Other, sep='')
-data$I_beh_obj_type <- NA
+## making a composite variable
+
+data$I_beh_obj <- paste_na(data$I_beh_obj.Manipulate,data$I_beh_obj.Inspect,data$I_beh_obj.Ignore,data$I_beh_obj.Other, sep='') # pasta_na
+data$I_beh_obj_type <- NA 
 data <- data%>% mutate(
   I_beh_obj_type=case_when(!is.na(I_beh_obj.Manipulate)~"Manipulate",
                            !is.na(I_beh_obj.Inspect)~"Inspect",
