@@ -8,9 +8,11 @@ p_load(ggplot2,tidyverse, Hmisc, gtable, gridExtra, plyr, dplyr, lme4, eply, str
        nlme, ggpubr, goft, openxlsx, broom.mixed, patchwork, psych,
        hrbrthemes, latticeExtra, plotrix, pbapply, data.table, word2vec);
 
+library(here)
+
 setwd("/Users/elenaluchkina/Documents/GitHub/code_review/9 months csv")
 path <-("//Users/elenaluchkina/Documents/GitHub/code_review/9 months csv") 
-merge_file_name <- ("/Users/elenaluchkina/Documents/GitHub/code_review/9 months csv/All_9mo")
+merge_file_name <- here::here('data/9 months csv/All_9mo')
   
 filenames <- list.files(path= path, full.names=TRUE)
 all_data <- map_df(filenames, ~read.csv(.x) %>% mutate(File = basename(.x)))
